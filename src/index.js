@@ -1,6 +1,7 @@
 'use strict';
 
 const express = require('express');
+const bodyParser = require('body-parser');
 const pino = require('pino')({
     name:'Server',
     level: 'trace'
@@ -8,6 +9,8 @@ const pino = require('pino')({
 
 const config = require('./config');
 const users = require('./users');
+const zones = require('./zones');
+const items = require('./items');
 
 
 
@@ -15,7 +18,11 @@ const users = require('./users');
 
 const app = express();
 app.use(requestLogger);
+app.use(bodyParser.json());
+app.use(users.getSession);
 app.use('/users', users.router);
+app.use('/zones', zones.router);
+app.use('/items', items.router);
 app.use(errorHandler);
 
 app.get('/health', (req, res) => {
@@ -33,13 +40,16 @@ app.listen(config.server.port, (err) => {
 });
 
 function requestLogger(req, res, next){
-    pino.debug(`${req.method} ${req.path}`);
+    const t = Date.now();
+    res.on('finish', () => {
+        pino.debug(`${res.statusCode} ${req.method} ${req.originalUrl} - ${Date.now() -t}ms`);
+    });
     return next();
 }
 
 function errorHandler(err, req, res, next){
     pino.error(err);
-    res.statusCode(500).end();
+    res.status(500).end();
     return next();
 }
 
