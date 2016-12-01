@@ -14,21 +14,12 @@ module.exports = {};
 const itemsRouter = module.exports.router = express.Router();
 
 itemsRouter.get('/', (req, res, next) => {
-    let query = `SELECT * FROM items `;
 
-    const filters = Object.keys(req.query);
-
-    if(filters.length){
-        query += filters.reduce((acc, curr) => {
-            return `${acc} ${curr} = '${req.query.curr}'`;
-        }, ' WHERE ');
-    }
-
-    return db.query(query, (err, users) => {
+    getItems(req.query, (err, items) =>{
         if(err) {
             return next(err);
         }
-        return res.json(users);
+        return res.json(items);
     });
 });
 
@@ -40,13 +31,31 @@ itemsRouter.post('/', authNeeded, (req, res, next) => {
     }, req.body);
     let query = `INSERT INTO items SET ?`;
 
-    return db.query(query, item,(err, item) => {
+    return db.query(query, item,(err, result) => {
         if(err) {
             return next(err);
         }
         pino.trace(`Item ${req.body.name} created by ${req.user.email}`, item);
-        return res.status(201).json(item);
+
+        getItems({zone: req.user.zone}, (err, items) => {
+            if(err) {
+                return next(err);
+            }
+            return res.status(201).json(items);
+        });
     });
 });
 
+function getItems(filters, done){
+    let query = `SELECT * FROM items `;
 
+    const filtersNames = Object.keys(filters);
+
+    if(filtersNames.length){
+        query += filtersNames.reduce((acc, curr) => {
+            return `${acc} ${curr} = '${filters[curr]}'`;
+        }, ' WHERE ');
+    }
+
+    return db.query(query, done)
+}
