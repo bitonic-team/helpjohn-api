@@ -17,6 +17,7 @@ const items = require('./items');
 
 
 const app = express();
+app.use(cors);
 app.use(requestLogger);
 app.use(bodyParser.json());
 app.use(users.getSession);
@@ -38,6 +39,12 @@ app.listen(config.server.port, (err) => {
     }
     pino.info(`Server listening on port ${config.server.port}`);
 });
+
+function cors(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    return next();
+}
 
 function requestLogger(req, res, next){
     const t = Date.now();
