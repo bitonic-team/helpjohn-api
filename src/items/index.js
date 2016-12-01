@@ -34,7 +34,6 @@ itemsRouter.get('/', (req, res, next) => {
 
 
 itemsRouter.post('/', authNeeded, (req, res, next) => {
-    pino.trace(`Item ${req.body.name} created by ${req.user.email}`, req.body);
 
     const item = Object.assign({
         zone: req.user.zone
@@ -45,6 +44,7 @@ itemsRouter.post('/', authNeeded, (req, res, next) => {
         if(err) {
             return next(err);
         }
+        pino.trace(`Item ${req.body.name} created by ${req.user.email}`, item);
         return res.status(201).json(item);
     });
 });

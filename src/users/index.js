@@ -14,9 +14,7 @@ module.exports = {
 const userRouter = module.exports.router = express.Router();
 
 
-const sessions = {
-
-};
+const sessions = {};
 
 function getSession(req, res, next){
     req.user = sessions[req.header('Authorization')];

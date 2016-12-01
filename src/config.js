@@ -2,7 +2,7 @@
 
 module.exports = {
     server: {
-        port: 8765
+        port: process.env.port || 8765
     },
     mysql: {
         host: process.env.db || 'localhost',
