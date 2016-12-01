@@ -1,0 +1,23 @@
+{
+  "name": "helpjohn-api",
+  "version": "1.0.0",
+  "description": "Help John API",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bitonic-team/helpjohn-api.git"
+  },
+  "author": "Antoine Chwalek <antoine.chwalek@adotmob.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bitonic-team/helpjohn-api/issues"
+  },
+  "homepage": "https://github.com/bitonic-team/helpjohn-api#readme",
+  "dependencies": {
+    "express": "^4.14.0"
+  }
+}
