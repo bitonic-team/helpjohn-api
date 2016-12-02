@@ -40,7 +40,7 @@ app.listen(config.server.port, (err) => {
 });
 
 function cors(req, res, next) {
-    res.header("Access-Control-Allow-Origin", ["helpjohn.xyz","*"]);
+    res.header("Access-Control-Allow-Origin", req.host);
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     return next();
