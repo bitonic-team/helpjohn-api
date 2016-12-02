@@ -7,6 +7,7 @@ const pino = require('pino')({
 });
 
 const {db} = require('../db');
+const {getItems} = require('../items');
 const config = require('../config');
 
 module.exports = {};
@@ -36,7 +37,12 @@ donationsRouter.post('/', (req, res, next) => {
         }
         pino.debug(` ${donation.name} donate ${donation.amount} € for item ${donation.item}`, donation);
 
-        res.end();
+        return getItems(null, (err, items) => {
+            if(err) {
+                return next(err);
+            }
+            return res.json(items);
+        });
     });
 });
 

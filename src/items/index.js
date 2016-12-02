@@ -10,7 +10,7 @@ const {db} = require('../db');
 const {authNeeded} = require('../users');
 const config = require('../config');
 
-module.exports = {};
+module.exports = {getItems};
 
 const itemsRouter = module.exports.router = express.Router();
 
