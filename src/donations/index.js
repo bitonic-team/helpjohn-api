@@ -37,7 +37,7 @@ donationsRouter.post('/', (req, res, next) => {
         }
         pino.debug(` ${donation.name} donate ${donation.amount} € for item ${donation.item}`, donation);
 
-        return getItems(null, (err, items) => {
+        return getItems({}, (err, items) => {
             if(err) {
                 return next(err);
             }
