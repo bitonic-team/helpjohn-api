@@ -1,5 +1,6 @@
 'use strict';
 const express = require('express');
+const async = require('neo-async');
 const pino = require('pino')({
     name:'Items',
     level: 'trace'
@@ -23,6 +24,35 @@ itemsRouter.get('/', (req, res, next) => {
     });
 });
 
+itemsRouter.delete('/:id', authNeeded, (req, res, next) => {
+    db.query(`DELETE FROM items WHERE id='${req.params.id}'`, (err) => {
+        if(err) return next(err);
+        return getItems({zone: req.user.zone}, (err, items) => {
+            if(err) {
+                return next(err);
+            }
+            pino.debug(`Item ${req.body.name} deleted by ${req.user.email}`);
+            return res.status(200).json(items);
+        })
+    })
+});
+
+itemsRouter.put('/', authNeeded, (req, res, next) => {
+    async.forEachOf(req.body, (item, priority,  done) => {
+        item.priority = priority;
+        const query = `UPDATE items SET ? WHERE id='${item.id}'`;
+        pino.trace(`MySQL Get Items : ${query}`);
+        db.query(query, item, done)
+    }, (err, result) => {
+        if(err) return next(err);
+        return getItems({zone: req.user.zone}, (err, items) => {
+            if(err) {
+                return next(err);
+            }
+            return res.status(200).json(items);
+        })
+    })
+});
 
 itemsRouter.post('/', authNeeded, (req, res, next) => {
 
@@ -56,6 +86,8 @@ function getItems(filters, done){
             return `${acc} ${curr} = '${filters[curr]}'`;
         }, ' WHERE ');
     }
+
+    query += ' ORDER BY priority';
 
     pino.trace(`MySQL Get Items : ${query}`);
     return db.query(query, done)

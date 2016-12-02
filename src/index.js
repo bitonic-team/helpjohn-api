@@ -11,9 +11,7 @@ const config = require('./config');
 const users = require('./users');
 const zones = require('./zones');
 const items = require('./items');
-
-
-
+const donations = require('./donations');
 
 
 const app = express();
@@ -24,6 +22,7 @@ app.use(users.getSession);
 app.use('/users', users.router);
 app.use('/zones', zones.router);
 app.use('/items', items.router);
+app.use('/donations', donations.router);
 app.use(errorHandler);
 
 app.get('/health', (req, res) => {
@@ -42,6 +41,7 @@ app.listen(config.server.port, (err) => {
 
 function cors(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     return next();
 }
