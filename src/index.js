@@ -2,6 +2,7 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const URL = require('url');
 const pino = require('pino')({
     name:'Server',
     level: 'trace'
@@ -40,7 +41,8 @@ app.listen(config.server.port, (err) => {
 });
 
 function cors(req, res, next) {
-    res.header("Access-Control-Allow-Origin", req.host);
+    const url =  URL.parse(req.referer || 'http://localhost') || {};
+    res.header("Access-Control-Allow-Origin", url.host);
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
     return next();
