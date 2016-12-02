@@ -41,7 +41,9 @@ app.listen(config.server.port, (err) => {
 });
 
 function cors(req, res, next) {
-    const url =  URL.parse(req.referer || 'http://localhost') || {};
+    const url =  URL.parse(req.get('Referrer') || 'http://localhost') || {};
+
+    pino.trace(`Referrer: ${url.host}`);
     res.header("Access-Control-Allow-Origin", url.host);
     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
