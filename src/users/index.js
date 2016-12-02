@@ -1,6 +1,7 @@
 'use strict';
 const express = require('express');
 const {v4} = require('node-uuid');
+const md5 = require('md5');
 const pino = require('pino')({name:'Users'});
 
 const {db} = require('../db');
@@ -10,6 +11,7 @@ module.exports = {
     authNeeded,
     getSession
 };
+
 
 const userRouter = module.exports.router = express.Router();
 
@@ -49,7 +51,7 @@ userRouter.post('/auth', (req, res, next) => {
     return db.query(`SELECT * FROM users WHERE email = '${req.body.email}'`, (err, result) => {
         if(err) return next(err);
         const user = result[0];
-        if(!user || user.password !== req.body.password){
+        if(!user || user.password !== md5(req.body.password)){
             return res.status(400).json({
                 err: `Unauthorized`
             });
