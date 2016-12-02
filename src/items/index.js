@@ -91,6 +91,13 @@ function getItems(filters, done){
     FROM items as i 
 `;
 
+    query += ` 
+    LEFT JOIN (
+        SELECT SUM(amount) as amount, item FROM donations GROUP BY item
+    ) as d
+    ON d.item = i.id
+    `;
+
     const filtersNames = Object.keys(filters);
 
     if(filtersNames.length){
@@ -98,13 +105,6 @@ function getItems(filters, done){
             return `${acc} ${curr} = '${filters[curr]}'`;
         }, ' WHERE ');
     }
-
-    query += ` 
-    LEFT JOIN (
-        SELECT SUM(amount) as amount, item FROM donations GROUP BY item
-    ) as d
-    ON d.item = i.id
-    `;
     query += ' ORDER BY priority';
 
     pino.trace(`MySQL Get Items : ${query}`);
