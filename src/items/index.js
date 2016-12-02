@@ -40,6 +40,7 @@ itemsRouter.delete('/:id', authNeeded, (req, res, next) => {
 itemsRouter.put('/', authNeeded, (req, res, next) => {
     async.forEachOf(req.body, (item, priority,  done) => {
         item.priority = priority;
+        delete item.amount;
         const query = `UPDATE items SET ? WHERE id='${item.id}'`;
         pino.trace(`MySQL Get Items : ${query}`);
         db.query(query, item, done)
