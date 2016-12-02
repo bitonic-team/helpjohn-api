@@ -35,7 +35,7 @@ itemsRouter.post('/', authNeeded, (req, res, next) => {
         if(err) {
             return next(err);
         }
-        pino.trace(`Item ${req.body.name} created by ${req.user.email}`, item);
+        pino.debug(`Item ${req.body.name} created by ${req.user.email}`, item);
 
         getItems({zone: req.user.zone}, (err, items) => {
             if(err) {
@@ -57,5 +57,6 @@ function getItems(filters, done){
         }, ' WHERE ');
     }
 
+    pino.trace(`MySQL Get Items : ${query}`);
     return db.query(query, done)
 }

@@ -49,7 +49,7 @@ function cors(req, res, next) {
 function requestLogger(req, res, next){
     const t = Date.now();
     res.on('finish', () => {
-        pino.debug(`${res.statusCode} ${req.method} ${req.originalUrl} - ${Date.now() -t}ms`);
+        pino.trace(`${res.statusCode} ${req.method} ${req.originalUrl} - ${Date.now() -t}ms`);
     });
     return next();
 }
