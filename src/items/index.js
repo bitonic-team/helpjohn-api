@@ -77,7 +77,18 @@ itemsRouter.post('/', authNeeded, (req, res, next) => {
 });
 
 function getItems(filters, done){
-    let query = `SELECT * FROM items `;
+    let query = `
+    SELECT 
+        i.id as id,
+        i.name as name,
+        i.daily as daily,
+        i.zone as zone,
+        i.price as price,
+        i.tag as tag,
+        i.priority as priority,
+        d.amount as amount
+    FROM items as i 
+`;
 
     const filtersNames = Object.keys(filters);
 
@@ -87,6 +98,12 @@ function getItems(filters, done){
         }, ' WHERE ');
     }
 
+    query += ` 
+    LEFT JOIN (
+        SELECT SUM(amount) as amount, item FROM donations GROUP BY item
+    ) as d
+    ON d.item = i.id
+    `;
     query += ' ORDER BY priority';
 
     pino.trace(`MySQL Get Items : ${query}`);
